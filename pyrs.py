@@ -4,7 +4,7 @@ import json
 import cv2
 import pyrealsense2 as rs
 import numpy as np
-
+import argparse
 
 class PyRS:
     def __init__(self, w=640, h=480, depth=True, frame_rate=30):
@@ -145,7 +145,7 @@ class PyRS:
             self.depth_frame = frames.get_depth_frame()
 
             # filter depth frame
-            self.depth_frame = self._filter(self.depth_frame)
+            # self.depth_frame = self._filter(self.depth_frame)
 
             # depth data to numpy array
             self._depth_image = np.asanyarray(self.depth_frame.get_data())
@@ -221,10 +221,27 @@ class PyRS:
         return {'width': i.width, 'height': i.height, 'intrinsic_matrix': mat}
 
 
+def get_arguments():
+    '''
+    parse all the arguments from command line interface
+    return a list of parsed arguments
+    '''
+
+    parser = argparse.ArgumentParser(description='take color images and depth images by librealsense')
+    parser.add_argument('obj_name', type=str, help='input the name of an object whose pictures you want to take')
+    parser.add_argument('obj_num', type=str, help='input the ID number of an object whose pictures you want to take')
+    parser.add_argument('scene', type=str, help='the scene where you\'ll take pics')
+
+    return parser.parse_args()
+
+
+
 if __name__ == '__main__':
 
-    height = 720
-    width = 1280
+    args = get_arguments()
+
+    height = 480
+    width = 640
 
     rgb_name = "rgb.png"
     depth_name = "depth.png"
@@ -241,6 +258,8 @@ if __name__ == '__main__':
         preset_name = pyrs.get_depth_preset_name(preset)
         print('Preset: ', pyrs.get_depth_preset_name(preset))
         print("Intrinsics: ", pyrs.get_intrinsic())
+
+        cnt = 0    # count the number of pics you did take
 
         while True:
             # Wait for a coherent pair of frames: depth and color
@@ -267,8 +286,9 @@ if __name__ == '__main__':
                 break
             elif key == ord('p'):
                 # save rgb and depth
-                cv2.imwrite(rgb_name, color_image)
-                cv2.imwrite(depth_name, depth_image)
+                cv2.imwrite('./image/' + args.obj_name + args.obj_num + '_' + args.scene + str(cnt) + '_' + rgb_name, color_image)
+                cv2.imwrite('./image/' + args.obj_name + args.obj_num + '_' + args.scene + str(cnt) + '_' + depth_name, depth_image)
+                cnt += 1
             elif key == ord('c'):
                 # change preset
                 preset = preset + 1
