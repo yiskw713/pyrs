@@ -286,8 +286,8 @@ if __name__ == '__main__':
                 break
             elif key == ord('p'):
                 # save rgb and depth
-                cv2.imwrite('./image/' + args.obj_name + args.obj_num + '_' + args.scene + str(cnt) + '_' + rgb_name, color_image)
-                cv2.imwrite('./image/' + args.obj_name + args.obj_num + '_' + args.scene + str(cnt) + '_' + depth_name, depth_image)
+                cv2.imwrite('./image/' + args.obj_name + args.obj_num + '_' + args.scene + '_{0:03d}_'.format(cnt) + rgb_name, color_image)
+                cv2.imwrite('./image/' + args.obj_name + args.obj_num + '_' + args.scene + '_{0:03d}_'.format(cnt) + depth_name, depth_image)
                 cnt += 1
             elif key == ord('c'):
                 # change preset
